@@ -76,32 +76,37 @@ class SigninActivity : AppCompatActivity() {
             binding.emailRegistered.visibility = View.GONE
             binding.cardView.visibility = View.GONE
 
-            val email = binding.emailRegistered.text.toString()
-            val password = binding.passwordRegistered.text.toString()
+            binding.loginRegistered.setOnClickListener {
+            val email = binding.email.text.toString()
+            val password = binding.password.text.toString()
             if(email.isEmpty() || password.isEmpty()){
                 Toast.makeText(
                     this,
                     "Please fill all the details",
                     Toast.LENGTH_SHORT
                 ).show()
-            } else{
-                auth.createUserWithEmailAndPassword(email,password)
-                    .addOnCompleteListener { task->
-                        if(task.isSuccessful){
-                            Toast.makeText(
-                                this,
-                                "Login Successfull",
-                                Toast.LENGTH_SHORT
-                            ).show()
+            } else {
+                auth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
+
+                            // Save session
+                            val sharedPref = getSharedPreferences("UserSession", MODE_PRIVATE)
+                            sharedPref.edit().putBoolean("isLoggedIn", true).apply()
+
                             startActivity(Intent(this, MainActivity::class.java))
                             finish()
-                        } else {
-                            Toast.makeText(this,
+                        }
+                        else {
+                            Toast.makeText(
+                                this,
                                 "Please enter correct details",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
                     }
+            }
             }
 
 
@@ -145,12 +150,13 @@ class SigninActivity : AppCompatActivity() {
                                             val uploadedFile = storage.createFile(
                                                 bucketId,
                                                 ID.unique(),
-                                                InputFile.fromFile(file)
+                                                InputFile.fromFile(file),
+                                                permissions = listOf("read(\"any\")")
                                             )
 
                                             val fileId = uploadedFile.id
                                             val fileUrl =
-                                                "https://cloud.appwrite.io/v1/storage/buckets/$bucketId/files/$fileId/view?project=689cf4f9002b26652617"
+                                                "https://nyc.cloud.appwrite.io/v1/storage/buckets/$bucketId/files/$fileId/view?project=689cf4f9002b26652617"
 
                                             Log.d(TAG, "File uploaded, fileUrl: $fileUrl")
 
@@ -161,15 +167,16 @@ class SigninActivity : AppCompatActivity() {
                                                     profileImageUrl = fileUrl
                                                 )
                                                 userReference.child(userId).setValue(newUserData)
-                                                Toast.makeText(
-                                                    this@SigninActivity,
-                                                    "Registration successful",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                                Log.d(TAG, "User data saved in Firebase")
+                                                Toast.makeText(this@SigninActivity, "Registration successful", Toast.LENGTH_SHORT).show()
+
+                                                // Save session
+                                                val sharedPref = getSharedPreferences("UserSession", MODE_PRIVATE)
+                                                sharedPref.edit().putBoolean("isLoggedIn", true).apply()
+
                                                 startActivity(Intent(this@SigninActivity, MainActivity::class.java))
                                                 finish()
                                             }
+
 
                                         } catch (e: Exception) {
                                             withContext(Dispatchers.Main) {

@@ -43,10 +43,10 @@ class StartActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        val currentUser = auth.currentUser
-        if(currentUser!=null){
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
-        }
+//        val currentUser = auth.currentUser
+//        if(currentUser!=null){
+//            startActivity(Intent(this, MainActivity::class.java))
+//            finish()
+//        }
     }
 }

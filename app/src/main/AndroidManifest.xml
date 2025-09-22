@@ -13,6 +13,21 @@
         android:theme="@style/Theme.Bloggers"
         tools:targetApi="31">
         <activity
+            android:name=".ArticleActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SavedArticlesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ReadMoreActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AddArticleActivity"
+            android:exported="false" />
+        <activity
             android:name=".SigninActivity"
             android:exported="false" />
         <activity
